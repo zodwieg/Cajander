@@ -1,0 +1,33 @@
+# Сборочная директория CMake
+/build/
+/.cmake/
+
+# Временные файлы Visual Studio / VS Code
+/.vs/
+/out/
+.vscode/cmake-variants.json
+.vscode/launch.json
+
+# Компиляторный мусор и бинарники (на случай, если они соберутся мимо папки build)
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.token
+*.tlog
+*.pyd
+*.dll
+*.so
+*.dylib
+
+# Локальные файлы настроек разработчика
+*.user
+*.suo
+*.ncb
+*.opensdf
+*.sdf
+
+# Временные файлы операционной системы
+Thumbs.db
+.DS_Store

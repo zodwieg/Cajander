@@ -1,0 +1,12 @@
+[general]
+name=CAJANDER
+qgisMinimumVersion=3.16
+description=Biome classification tool (C++ Core Stub)
+version=0.2.1
+author=Sergey Kondratiev
+email=s.k.kondratiev@gmail.com
+about=A versatile tool converting raw satellite data into a customizable forest classification raster. C++ Edition.
+tracker=
+repository=
+category=Plugins
+experimental=True
