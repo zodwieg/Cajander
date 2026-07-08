@@ -3,6 +3,7 @@
 #include "gui/classification/ClassificationTab.h"
 #include "gui/processing/ProcessingTab.h"
 #include "gui/help/HelpTab.h"
+#include "infrastructure/pluginContext.h"
 
 #include <QVBoxLayout>
 #include <QTabWidget>
@@ -14,7 +15,7 @@ MainDialog::MainDialog(QWidget* parent) : QDialog(parent) {
     m_tabWidget = new QTabWidget(this);
 
     m_tabWidget->addTab(new DataTab(this), "Data");
-    m_tabWidget->addTab(new ClassificationTab(m_biomeRepository, this), tr("Classification"));
+    m_tabWidget->addTab(new ClassificationTab(this), tr("Classification"));
     m_tabWidget->addTab(new ProcessingTab(this), "Processing");
     m_tabWidget->addTab(new HelpTab(this), "Help");
 

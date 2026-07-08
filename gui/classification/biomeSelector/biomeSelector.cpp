@@ -1,4 +1,6 @@
 #include "gui/classification/biomeSelector/biomeSelector.h"
+#include "infrastructure/plugincontext.h"
+#include "gui/classification/biomeSelector/biomeModel.h"
 
 #include <QHBoxLayout>
 #include <QComboBox>
@@ -7,39 +9,32 @@
 
 namespace Cajander::Gui {
 
-    BiomeSelector::BiomeSelector(QAbstractItemModel* biomeModel, QWidget* parent)
+    BiomeSelector::BiomeSelector(QWidget* parent)
         : QWidget(parent)
-        , m_model(biomeModel) 
     {
-        // 1. Инициализируем UI-элементы
+        // Вытаскиваем синглтон-модель прямо из контекста
+        m_model = &PluginContext::instance().biomeModel(); 
+
         auto* layout = new QHBoxLayout(this);
-        // Убираем внешние отступы, чтобы компонент аккуратно вставал в любые родительские Layout
         layout->setContentsMargins(0, 0, 0, 0); 
-        layout->setSpacing(6); // Небольшой зазор между селектором и кнопкой
+        layout->setSpacing(6); 
 
         m_comboBox = new QComboBox(this);
         m_editButton = new QPushButton(this);
 
         m_editButton->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton)); 
         m_editButton->setToolTip(tr("Edit Biomes"));
-        m_editButton->setFixedWidth(30); // Делаем кнопку компактной и квадратной
+        m_editButton->setFixedWidth(30); 
 
-        // 2. Интегрируем строгое strict-решение: привязываем модель к QComboBox
+        // Привязываем модель к QComboBox
         if (m_model) {
             m_comboBox->setModel(m_model);
         }
 
-        // 3. Собираем Layout
-        layout->addWidget(m_comboBox, 1); // Растягивается (weight = 1)
-        layout->addWidget(m_editButton, 0); // Имеет фиксированную ширину (weight = 0)
+        layout->addWidget(m_comboBox, 1); 
+        layout->addWidget(m_editButton, 0); 
 
-        // 4. Коммуникация через современный синтаксис указателей на методы (C++11+)
-        // QComboBox::currentIndexChanged имеет перегрузки в старых версиях Qt, 
-        // но начиная с Qt 5.7/6 за основу взят вариант с int, работаем с ним.
-        // Добавь #include <QComboBox> если вдруг забыл, но главное — синтаксис qOverload:
         connect(m_comboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &BiomeSelector::onComboBoxIndexChanged);
-
-        // Пробрасываем клик по кнопке наружу в виде нашего кастомного сигнала
         connect(m_editButton, &QPushButton::clicked, this, &BiomeSelector::editBiomesRequested);
     }
 

@@ -35,7 +35,8 @@ if(NOT QGIS_LIBRARIES)
 endif()
 
 # --- ПОДКЛЮЧЕНИЕ СЛОЕВ (Порядок важен!) ---
-add_subdirectory(domain)    # Ни от чего не зависит
-add_subdirectory(gui)     # Зависит от domain и Qt
-add_subdirectory(services) # Зависит от domain
-add_subdirectory(plugin)  # Зависит от всех (собирает финальный dll и деплоит)
+add_subdirectory(domain)          # 1. Чистый домен (не зависит ни от чего)
+add_subdirectory(services)        # 2. Бизнес-логика (зависит только от domain)
+add_subdirectory(infrastructure)  # 3. Контекст и хранилище (зависит от domain и services)
+add_subdirectory(gui)             # 4. Интерфейс (зависит от всех предыдущих, так как видит модели и контекст)
+add_subdirectory(plugin)          # 5. Главный модуль плагина (собирает dll)

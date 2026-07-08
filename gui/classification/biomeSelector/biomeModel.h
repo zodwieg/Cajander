@@ -29,6 +29,8 @@ public:
     // Возвращает данные для конкретного элемента по его индексу и роли
     QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
+    void refresh();
+
 private:
     const Services::BiomeRepository& m_repository;
 };

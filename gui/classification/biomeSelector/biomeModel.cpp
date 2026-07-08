@@ -1,5 +1,7 @@
 #include "gui/classification/biomeSelector/biomeModel.h"
 #include "services/biomes/biomeRepository.h"
+#include <qgsmessagelog.h>
+#include <qgis.h>
 
 namespace Cajander::Gui {
 
@@ -14,7 +16,8 @@ int BiomeModel::rowCount(const QModelIndex& parent) const {
     if (parent.isValid()) {
         return 0;
     }
-    return static_cast<int>(m_repository.getAllBiomes().size());
+    QgsMessageLog::logMessage(QString("BiomeModel rowCount: %1").arg(m_repository.getBiomes().size()), "Cajander", Qgis::MessageLevel::Info);
+    return static_cast<int>(m_repository.getBiomes().size());
 }
 
 QVariant BiomeModel::data(const QModelIndex& index, int role) const {
@@ -23,7 +26,7 @@ QVariant BiomeModel::data(const QModelIndex& index, int role) const {
         return QVariant();
     }
 
-    const auto& biomes = m_repository.getAllBiomes();
+    const auto& biomes = m_repository.getBiomes();
     if (index.row() < 0 || index.row() >= static_cast<int>(biomes.size())) {
         return QVariant();
     }
@@ -52,6 +55,11 @@ QVariant BiomeModel::data(const QModelIndex& index, int role) const {
         default:
             return QVariant();
     }
+}
+
+void BiomeModel::refresh() {
+    beginResetModel();
+    endResetModel();
 }
 
 } // namespace Cajander::Gui

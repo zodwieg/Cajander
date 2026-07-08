@@ -16,7 +16,7 @@ namespace Cajander::Gui {
     public:
         // Принимаем модель через сырой указатель. В Qt управление временем жизни моделей 
         // обычно лежит на вызывающем коде (или родителе), а виджет просто её использует.
-        explicit BiomeSelector(QAbstractItemModel* biomeModel, QWidget* parent = nullptr);
+        explicit BiomeSelector(QWidget* parent = nullptr);
         ~BiomeSelector() override = default;
 
     signals:

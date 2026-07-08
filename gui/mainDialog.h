@@ -1,8 +1,6 @@
 #pragma once
 #include <QDialog>
 
-#include "services/biomes/biomeRepository.h"
-
 class QTabWidget;
 
 class MainDialog : public QDialog {
@@ -15,5 +13,4 @@ public:
 
 private:
     QTabWidget* m_tabWidget = nullptr;
-    Cajander::Services::BiomeRepository m_biomeRepository;
 };

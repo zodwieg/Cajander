@@ -3,6 +3,7 @@
 #include <QAction> 
 #include <QIcon>
 #include "gui/MainDialog.h"
+#include "infrastructure/pluginContext.h"
 
 // Глобальные указатели (управляются жизненным циклом плагина в QGIS)
 QgisInterface* g_qgisInterface = nullptr;
@@ -35,6 +36,8 @@ extern "C" {
 
     PLUGIN_EXPORT void initPlugin(QgisInterface* iface) {
         g_qgisInterface = iface;
+
+        Cajander::PluginContext::instance();
 
         g_pluginAction = new QAction(QObject::tr("Run CAJANDER"), g_qgisInterface->mainWindow());
         g_pluginAction->setIcon(QIcon(":/plugins/cajander/icon.png"));

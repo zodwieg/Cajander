@@ -17,7 +17,7 @@ set(GUI_HEADERS
     data/DataTab.h
     classification/ClassificationTab.h
     classification/biomeSelector/biomeSelector.h
-    classification/biomeSelector/biomeModel.cpp
+    classification/biomeSelector/biomeModel.h
     processing/ProcessingTab.h
     help/HelpTab.h
 )
@@ -25,17 +25,9 @@ set(GUI_HEADERS
 # 1. Меняем OBJECT на STATIC. Это создаст полноценный .lib / .a архив.
 add_library(cajander_gui STATIC ${GUI_SOURCES} ${GUI_HEADERS})
 
-# 2. Настраиваем инклуды правильно
-target_include_directories(cajander_gui 
-    # PUBLIC говорит: "Любой, кто линкует cajander_gui, тоже должен искать заголовки здесь"
-    # Это позволит писать #include "gui/MainDialog.h" в слое plugin
-    PUBLIC 
-        ${CMAKE_SOURCE_DIR} 
-    # PRIVATE говорит: "Эти пути нужны только для компиляции самого GUI"
-    PRIVATE 
-        ${QGIS_INCLUDE_DIR}
-        ${QGIS_INCLUDE_DIR}/core
-        ${QGIS_INCLUDE_DIR}/gui
+target_include_directories(cajander_gui PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${QGIS_INCLUDE_DIR}
 )
 
 # 3. Связываем GUI с компонентами Qt.
@@ -43,7 +35,9 @@ target_include_directories(cajander_gui
 target_link_libraries(cajander_gui PUBLIC
     cajander_domain
     cajander_services
+    cajander_infrastructure
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
+    ${QGIS_LIBRARIES}
 )
