@@ -18,6 +18,7 @@ target_include_directories(cajander PRIVATE
 # Линкуем всё воедино. Магия в том, что cajander_gui сам притянет за собой cajander_core и Qt5::Widgets!
 target_link_libraries(cajander PRIVATE
     cajander_gui
+    cajander_services
     ${QGIS_LIBRARIES}
     Qt5::Xml
 )

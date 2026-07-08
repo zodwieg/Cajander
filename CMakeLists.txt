@@ -35,6 +35,7 @@ if(NOT QGIS_LIBRARIES)
 endif()
 
 # --- ПОДКЛЮЧЕНИЕ СЛОЕВ (Порядок важен!) ---
-add_subdirectory(core)    # Ни от чего не зависит
-add_subdirectory(gui)     # Зависит от core и Qt
+add_subdirectory(domain)    # Ни от чего не зависит
+add_subdirectory(gui)     # Зависит от domain и Qt
+add_subdirectory(services) # Зависит от domain
 add_subdirectory(plugin)  # Зависит от всех (собирает финальный dll и деплоит)

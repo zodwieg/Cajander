@@ -14,7 +14,7 @@ MainDialog::MainDialog(QWidget* parent) : QDialog(parent) {
     m_tabWidget = new QTabWidget(this);
 
     m_tabWidget->addTab(new DataTab(this), "Data");
-    m_tabWidget->addTab(new ClassificationTab(this), "Classification");
+    m_tabWidget->addTab(new ClassificationTab(m_biomeRepository, this), tr("Classification"));
     m_tabWidget->addTab(new ProcessingTab(this), "Processing");
     m_tabWidget->addTab(new HelpTab(this), "Help");
 

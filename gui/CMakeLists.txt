@@ -6,6 +6,8 @@ set(GUI_SOURCES
     MainDialog.cpp
     data/DataTab.cpp
     classification/ClassificationTab.cpp
+    classification/biomeSelector/biomeSelector.cpp
+    classification/biomeSelector/biomeModel.cpp
     processing/ProcessingTab.cpp
     help/HelpTab.cpp
 )
@@ -14,6 +16,8 @@ set(GUI_HEADERS
     MainDialog.h
     data/DataTab.h
     classification/ClassificationTab.h
+    classification/biomeSelector/biomeSelector.h
+    classification/biomeSelector/biomeModel.cpp
     processing/ProcessingTab.h
     help/HelpTab.h
 )
@@ -37,6 +41,8 @@ target_include_directories(cajander_gui
 # 3. Связываем GUI с компонентами Qt.
 # Меняем PRIVATE на PUBLIC, чтобы слой plugin автоматически наследовал зависимости от Qt
 target_link_libraries(cajander_gui PUBLIC
+    cajander_domain
+    cajander_services
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
