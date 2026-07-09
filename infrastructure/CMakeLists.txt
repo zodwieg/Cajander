@@ -12,13 +12,11 @@ set(INFRASTRUCTURE_HEADERS
 
 add_library(cajander_infrastructure STATIC ${INFRASTRUCTURE_SOURCES} ${INFRASTRUCTURE_HEADERS})
 
-# Инфраструктура связывает Сервисы и UI-модели (так как контекст знает про BiomeModel)
 target_link_libraries(cajander_infrastructure
     PUBLIC cajander_services
     PRIVATE 
         Qt5::Core
         Qt5::Widgets
-        # Сюда передаются переменные путей QGIS, которые ты закоммитил в корневом CMake
         ${QGIS_LIBRARIES} 
 )
 

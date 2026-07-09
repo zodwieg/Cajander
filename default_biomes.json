@@ -1,17 +1,92 @@
 [
     {
+        "code": 100,
+        "name": "Kuiva niitty",
+        "description": "Dry meadow, clear-cut area, or sands"
+    },
+    {
+        "code": 111,
+        "name": "Karukkokangas",
+        "description": "Dry pine woodland or heathland"
+    },
+    {
+        "code": 112,
+        "name": "Kuiva sekametsä",
+        "description": "Dry young pine-birch forest"
+    },
+    {
+        "code": 121,
+        "name": "Puolukkatyyppi / VT",
+        "description": "Dry cowberry pine forest or lichen-rich pine forest"
+    },
+    {
+        "code": 122,
+        "name": "Kuivahko sekametsä",
+        "description": "Semi-dry mixed pine forest"
+    },
+    {
+        "code": 200,
+        "name": "Tuore niitty",
+        "description": "Fresh meadow or overgrown arable land"
+    },
+    {
+        "code": 212,
+        "name": "Nuori sekametsä",
+        "description": "Mixed young stand or overgrown clear-cut area"
+    },
+    {
+        "code": 221,
+        "name": "Mustikkatyyppi / MT",
+        "description": "Fresh bilberry spruce forest"
+    },
+    {
+        "code": 222,
+        "name": "Tuore sekametsä",
+        "description": "Fresh bilberry-mixed spruce-birch forest"
+    },
+    {
+        "code": 223,
+        "name": "Tuore koivikko",
+        "description": "Fresh deciduous forest or birch-dominated forest"
+    },
+    {
+        "code": 300,
+        "name": "Kosteikko / Neva",
+        "description": "Wet meadow or treeless large-sedge wetland"
+    },
+    {
+        "code": 312,
+        "name": "Kosteampi sekametsä",
+        "description": "Wet mixed young stand or shrub thickets"
+    },
+    {
+        "code": 321,
+        "name": "Seonnosmetsä / OMT",
+        "description": "Wet wood-sorrel or polytrichum spruce forest"
+    },
+    {
+        "code": 322,
+        "name": "Kosteampi sekametsä",
+        "description": "Wet mixed dense forest along streams"
+    },
+    {
+        "code": 323,
+        "name": "Lehtokorpi",
+        "description": "Wet floodplain alder forest or birch forest"
+    },
+    {
         "code": 400,
-        "name": "Neva",
-        "description": "Bog"
+        "name": "Avosuo / Neva",
+        "description": "Open sphagnum bog or quagmire"
     },
     {
-        "code": 2,
-        "name": "Лиственный лес",
-        "description": "Лес из дуба, ясеня, липы"
+        "code": 411,
+        "name": "Räme",
+        "description": "Stunted pine bog on sphagnum"
     },
     {
-        "code": 3,
-        "name": "Хвойный лес",
-        "description": "Лес из сосны, ели, пихты"
+        "code": 423,
+        "name": "Korpi / Tervaleppäkorpi",
+        "description": "Waterlogged spruce forest or dense black alder swamp"
     }
 ]

@@ -5,7 +5,6 @@
 #include "gui/MainDialog.h"
 #include "infrastructure/pluginContext.h"
 
-// Глобальные указатели (управляются жизненным циклом плагина в QGIS)
 QgisInterface* g_qgisInterface = nullptr;
 QAction* g_pluginAction = nullptr;
 MainDialog* g_mainDialog = nullptr; 
@@ -27,11 +26,11 @@ extern "C" {
     }
 
     PLUGIN_EXPORT const char* version() {
-        return "0.3.2"; // Обновили до текущей версии билда
+        return "0.3.5";
     }
 
     PLUGIN_EXPORT int type() {
-        return 1; // UI-плагин
+        return 1;
     }
 
     PLUGIN_EXPORT void initPlugin(QgisInterface* iface) {
@@ -61,7 +60,6 @@ extern "C" {
     }
 
     PLUGIN_EXPORT void unloadPlugin() {
-        // Если окно открыто при выгрузке плагина — закрываем его
         if (g_mainDialog) {
             g_mainDialog->close(); 
         }

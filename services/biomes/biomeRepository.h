@@ -5,7 +5,6 @@
 #include <memory>
 #include <QObject>
 
-// Опережающее объявление интерфейса (ускоряет компиляцию)
 namespace Cajander::Services {
     class IBiomeStorage;
 }
@@ -20,6 +19,8 @@ public:
     ~BiomeRepository() override;
 
     void loadFromStorage();
+
+    void importBiomes(std::vector<Domain::Biome> newBiomes);
 
     bool saveToStorage() const;
 

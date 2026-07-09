@@ -1,26 +1,27 @@
-#include "biomerepository.h"
-#include "ibiomestorage.h" // Подключаем интерфейс здесь
+#include "biomeRepository.h"
+#include "ibiomeStorage.h"
 
 namespace Cajander::Services {
 
-// Принимаем владение указателем через std::move
 BiomeRepository::BiomeRepository(std::unique_ptr<IBiomeStorage> storage, QObject* parent) 
     : QObject(parent), m_storage(std::move(storage)) {
 }
 
-// Деструктор должен быть здесь, так как компилятору в этой точке 
-// уже полностью известен размер и устройство типа IBiomeStorage
 BiomeRepository::~BiomeRepository() = default;
 
 void BiomeRepository::loadFromStorage() {
     m_biomes.clear();
 
     if (m_storage) {
-        // Вызываем чтение из JSON и перемещаем вектор в наш кэш
-        // std::move здесь избегает лишнего копирования тяжелого вектора строк
         m_biomes = std::move(m_storage->loadBiomes());
         emit biomesChanged();
     }
+}
+
+void BiomeRepository::importBiomes(std::vector<Domain::Biome> newBiomes) {
+    m_biomes = std::move(newBiomes);
+    saveToStorage();
+    emit biomesChanged();
 }
 
 bool BiomeRepository::saveToStorage() const {
