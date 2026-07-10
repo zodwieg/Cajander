@@ -9,9 +9,9 @@
 namespace Cajander::Gui::Utils {
 
     /**
-     * @brief Safely loads a QGIS icon and setis it as a button icon
+     * @brief Safely loads a QGIS icon and sets it as a button icon
      * @param button Pointer to a Qt button
-     * @param iconName Icon file mane (ex.g. "/mActionFileOpen.svg")
+     * @param iconName Icon file name (ex.g. "/mActionFileOpen.svg")
      * @param widgetContext Widget name for error logging (ex.g. "BiomeSelector")
      */
     inline void setupThemeIcon(QPushButton* button, const QString& iconName, const QString& widgetContext) 

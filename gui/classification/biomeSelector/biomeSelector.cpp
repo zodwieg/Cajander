@@ -2,12 +2,15 @@
 #include "infrastructure/plugincontext.h"
 #include "gui/classification/biomeSelector/biomeModel.h"
 #include "gui/utils/uiUtils.h"
-#include "biomeLoader.h"
+
+// Инклуды сервисов и тяжелых окон теперь живут ТОЛЬКО в .cpp
+#include "gui/classification/biomeLoader/biomeLoader.h"
+#include "gui/classification/biomeEditor/biomeEditor.h"
+#include "services/biomes/biomeRepository.h"
 
 #include <QHBoxLayout>
 #include <QComboBox>
 #include <QPushButton>
-#include <QStyle>
 
 namespace Cajander::Gui {
 
@@ -32,18 +35,16 @@ namespace Cajander::Gui {
 
         if (m_model) {
             m_comboBox->setModel(m_model);
-            m_loader = std::make_unique<BiomeLoader>(m_model, this);
         }
 
         layout->addWidget(m_comboBox, 1); 
         layout->addWidget(m_loadButton, 0); 
         layout->addWidget(m_editButton, 0);
 
+        // Полная симметрия и простота в коннектах
         connect(m_comboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &BiomeSelector::onComboBoxIndexChanged);
-        if (m_loader) {
-            connect(m_loadButton, &QPushButton::clicked, m_loader.get(), &BiomeLoader::openFileDialog);
-        }
-        connect(m_editButton, &QPushButton::clicked, this, &BiomeSelector::editBiomesRequested);
+        connect(m_loadButton, &QPushButton::clicked, this, &BiomeSelector::onLoadBiomesClicked);
+        connect(m_editButton, &QPushButton::clicked, this, &BiomeSelector::onEditBiomesClicked);
     }
 
     void BiomeSelector::onComboBoxIndexChanged(int index) {
@@ -55,10 +56,22 @@ namespace Cajander::Gui {
         }
     }
 
-    void BiomeSelector::showEvent(QShowEvent* event) 
-    {
-        QWidget::showEvent(event);
+    // Лоадер: создался, отработал, удалился
+    void BiomeSelector::onLoadBiomesClicked() {
+        auto& repository = PluginContext::instance().biomeRepository();
+        BiomeLoader loader(repository, this);
+        loader.openFileDialog();
+    }
 
+    // Редактор: создался, заблокировал интерфейс (модально), закрылся, удалился
+    void BiomeSelector::onEditBiomesClicked() {
+        auto& repository = PluginContext::instance().biomeRepository();
+        BiomeEditor editor(repository, this);
+        editor.exec();
+    }
+
+    void BiomeSelector::showEvent(QShowEvent* event) {
+        QWidget::showEvent(event);
         if (!m_resourcesLoaded) {
             Cajander::Gui::Utils::setupThemeIcon(m_loadButton, QString("/mActionFileOpen.svg"), QString("BiomeSelector"));
             Cajander::Gui::Utils::setupThemeIcon(m_editButton, QString("/mActionToggleEditing.svg"), QString("BiomeSelector"));

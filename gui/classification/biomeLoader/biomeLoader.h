@@ -4,15 +4,16 @@
 #include <QWidget>
 #include <QString>
 
-namespace Cajander::Gui {
+// Опережающие объявления
+namespace Cajander::Services { class BiomeRepository; }
 
-class BiomeModel;
+namespace Cajander::Gui {
 
 class BiomeLoader : public QObject {
     Q_OBJECT
 
 public:
-    explicit BiomeLoader(BiomeModel* model, QWidget* parent = nullptr);
+    explicit BiomeLoader(Services::BiomeRepository& repository, QWidget* parent = nullptr);
     ~BiomeLoader() override = default;
 
 public slots:
@@ -22,7 +23,7 @@ private:
     bool loadJsonFromFile(const QString& filePath, QString& errorMsg);
     void showErrorDialog(const QString& text);
 
-    BiomeModel* m_model{nullptr};
+    Services::BiomeRepository& m_repository;
     QWidget* m_parentWidget{nullptr};
 };
 

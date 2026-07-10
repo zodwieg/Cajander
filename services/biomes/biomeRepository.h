@@ -22,7 +22,11 @@ public:
 
     void importBiomes(std::vector<Domain::Biome> newBiomes);
 
+    void updateBiome(std::size_t index, const Domain::Biome& updatedBiome);
+
     bool saveToStorage() const;
+
+    bool exportBiomesTo(const QString& filePath) const;
 
     const std::vector<Domain::Biome>& getBiomes() const { return m_biomes; }
 

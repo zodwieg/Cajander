@@ -40,6 +40,9 @@ namespace Cajander::Gui {
 
         std::unique_ptr<BiomeLoader> m_loader;
 
+        void onLoadBiomesClicked();
+        void onEditBiomesClicked();
+
         bool m_resourcesLoaded = false;
     };
 }

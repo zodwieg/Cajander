@@ -1,8 +1,6 @@
 #include "biomeLoader.h"
-#include "gui/classification/biomeSelector/biomeModel.h"
 #include "infrastructure/biomes/jsonBiomeStorage.h"
 #include "services/biomes/biomeRepository.h"
-#include "infrastructure/pluginContext.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -10,19 +8,15 @@
 
 namespace Cajander::Gui {
 
-BiomeLoader::BiomeLoader(BiomeModel* model, QWidget* parent)
+// Инициализируем ссылку на репозиторий
+BiomeLoader::BiomeLoader(Services::BiomeRepository& repository, QWidget* parent)
     : QObject(parent)
-    , m_model(model)
+    , m_repository(repository)
     , m_parentWidget(parent)
 {
 }
 
 void BiomeLoader::openFileDialog() {
-    if (!m_model) {
-        showErrorDialog(tr("Biome model is not initialized."));
-        return;
-    }
-
     QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
     QString filePath = QFileDialog::getOpenFileName(
@@ -59,10 +53,7 @@ bool BiomeLoader::loadJsonFromFile(const QString& filePath, QString& errorMsg) {
         errorMsg = tr("The file is empty, corrupted, or has an invalid format.");
         return false;
     }
-
-    auto& repository = PluginContext::instance().biomeRepository();
-    
-    repository.importBiomes(std::move(loadedBiomes));
+    m_repository.importBiomes(std::move(loadedBiomes));
 
     return true; 
 }

@@ -16,7 +16,7 @@ public:
 
     std::vector<Domain::Biome> loadBiomes() override;
     bool saveBiomes(const std::vector<Domain::Biome>& biomes) override;
-
+    bool saveBiomesTo(const std::vector<Domain::Biome>& biomes, const QString& filePath) override;
     static std::vector<Domain::Biome> parseJsonArray(const QJsonArray& array);
     static QJsonArray serializeBiomes(const std::vector<Domain::Biome>& biomes);
 

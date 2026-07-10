@@ -24,6 +24,26 @@ void BiomeRepository::importBiomes(std::vector<Domain::Biome> newBiomes) {
     emit biomesChanged();
 }
 
+void BiomeRepository::updateBiome(std::size_t index, const Domain::Biome& updatedBiome) {
+    if (index >= m_biomes.size()) {
+        return; 
+    }
+    m_biomes[index] = updatedBiome;
+    saveToStorage();
+    emit biomesChanged();
+}
+
+bool BiomeRepository::exportBiomesTo(const QString& filePath) const {
+    if (filePath.isEmpty()) {
+        return false;
+    }
+    if (m_storage) {
+        return m_storage->saveBiomesTo(m_biomes, filePath);
+    }
+    
+    return false;
+}
+
 bool BiomeRepository::saveToStorage() const {
     if (m_storage) {
         return m_storage->saveBiomes(m_biomes);

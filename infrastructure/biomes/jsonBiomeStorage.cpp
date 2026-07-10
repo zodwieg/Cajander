@@ -108,4 +108,22 @@ bool JsonBiomeStorage::saveBiomes(const std::vector<Domain::Biome>& biomes) {
     return true;
 }
 
+bool JsonBiomeStorage::saveBiomesTo(const std::vector<Domain::Biome>& biomes, const QString& filePath) {
+    if (filePath.isEmpty()) {
+        return false;
+    }
+
+    QJsonArray array = serializeBiomes(biomes);
+    QJsonDocument doc(array);
+    QFile file(filePath);
+    
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    file.write(doc.toJson(QJsonDocument::Indented));
+    file.close();
+    return true;
+}
+
 } // namespace Cajander::Infrastructure

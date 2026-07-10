@@ -6,7 +6,10 @@ set(GUI_SOURCES
     classification/ClassificationTab.cpp
     classification/biomeSelector/biomeSelector.cpp
     classification/biomeSelector/biomeModel.cpp
-    classification/biomeSelector/biomeLoader.cpp
+    classification/biomeLoader/biomeLoader.cpp
+    classification/biomeEditor/biomeEditor.cpp
+    classification/biomeEditor/biomeTableModel.cpp
+    classification/biomeExporter/biomeExporter.cpp
     processing/ProcessingTab.cpp
     help/HelpTab.cpp
 )
@@ -18,7 +21,10 @@ set(GUI_HEADERS
     classification/ClassificationTab.h
     classification/biomeSelector/biomeSelector.h
     classification/biomeSelector/biomeModel.h
-    classification/biomeSelector/biomeLoader.h
+    classification/biomeLoader/biomeLoader.h
+    classification/biomeEditor/biomeEditor.h
+    classification/biomeEditor/biomeTableModel.h
+    classification/biomeExporter/biomeExporter.h
     processing/ProcessingTab.h
     help/HelpTab.h
 )
