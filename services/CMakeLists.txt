@@ -17,6 +17,6 @@ target_include_directories(cajander_services PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/
 
 target_link_libraries(cajander_services 
     PUBLIC 
-        cajander_domain  # Наш доменный слой с Biome struct
-        Qt5::Core        # Нужен для QObject::tr и строк
+        cajander_domain
+        Qt5::Core
 )

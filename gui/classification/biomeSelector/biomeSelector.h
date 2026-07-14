@@ -2,11 +2,10 @@
 
 #include <QWidget>
 
-// Forward declarations (опережающие объявления), чтобы не тащить тяжелые заголовочные файлы в хэдер.
-// Это ускоряет компиляцию и уменьшает связанность кода.
 class QComboBox;
 class QPushButton;
 class QAbstractItemModel;
+class QLabel;
 
 namespace Cajander::Gui {
 
@@ -25,17 +24,20 @@ namespace Cajander::Gui {
 
         void loadBiomesRequested();
         void editBiomesRequested();
+        
 
     protected: 
         void showEvent(QShowEvent* event) override;
 
     private slots:
         void onComboBoxIndexChanged(int index);
+        void updateSchemeLabel();
 
     private:
         QComboBox* m_comboBox{nullptr};
         QPushButton* m_loadButton{nullptr};
         QPushButton* m_editButton{nullptr};
+        QLabel* m_schemeNameLabel{nullptr};
         Cajander::Gui::BiomeModel* m_model{nullptr};
 
         std::unique_ptr<BiomeLoader> m_loader;

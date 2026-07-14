@@ -1,7 +1,29 @@
 #include "gui/classification/biomeSelector/biomeModel.h"
 #include "services/biomes/biomeRepository.h"
 
+#include <QPixmap>
+#include <QPainter>
+#include <QIcon>
+
 namespace Cajander::Gui {
+
+QIcon createColorIcon(const QColor& color) {
+    if (!color.isValid()) return QIcon();
+
+    const int size = 12;
+    QPixmap pixmap(size, size);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    painter.setBrush(color);
+    painter.setPen(QPen(QColor(180, 180, 180), 1));
+    painter.drawRoundedRect(0, 0, size - 1, size - 1, 2, 2);
+    painter.end();
+
+    return QIcon(pixmap);
+}
 
 BiomeModel::BiomeModel(const Services::BiomeRepository& repository, QObject* parent)
     : QAbstractListModel(parent)
@@ -29,6 +51,10 @@ QVariant BiomeModel::data(const QModelIndex& index, int role) const {
     }
 
     const auto& biome = biomes[static_cast<std::size_t>(index.row())];
+
+    if (role == Qt::DecorationRole) {
+        return createColorIcon(biome.color);
+    }
 
     switch (role) {
         case Qt::DisplayRole:

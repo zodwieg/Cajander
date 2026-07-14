@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDir>
+#include <QRegularExpression>
 
 namespace Cajander::UI {
 
@@ -15,7 +16,6 @@ BiomeExporter::BiomeExporter(Cajander::Services::BiomeRepository* repository, QO
 }
 
 void BiomeExporter::openSaveDialog() {
-    // 1. Проверяем данные
     auto* parentWidget = qobject_cast<QWidget*>(parent());
 
     if (m_repository->getBiomes().empty()) {
@@ -25,11 +25,16 @@ void BiomeExporter::openSaveDialog() {
         return;
     }
 
-    // 2. Открываем нативный диалог сохранения
+    QString safeSchemeName = m_repository->getSchemeName().trimmed();
+    safeSchemeName.replace(QRegularExpression("[\\\\/:*?\"<>|]"), "_");
+    if (safeSchemeName.isEmpty()) {
+        safeSchemeName = "biomes_export";
+    }
+
     QString selectedPath = QFileDialog::getSaveFileName(
         m_parentWidget,
         tr("Export to JSON"),
-        QDir::homePath() + "/biomes_export.json",
+        QDir::homePath() + "/" + safeSchemeName + ".json",
         tr("JSON Files (*.json)")
     );
 
@@ -37,17 +42,18 @@ void BiomeExporter::openSaveDialog() {
         return;
     }
 
-    bool success = m_repository->exportBiomesTo(selectedPath);
+    bool success = m_repository->exportSchemeTo(selectedPath);
 
     if (success) {
         QMessageBox::information(m_parentWidget, 
                                  tr("Success"), 
-                                 tr("Biomes were successfully exported to:\n%1").arg(selectedPath));
+                                 tr("Biome scheme was successfully exported to:\n%1").arg(selectedPath));
     } else {
         QMessageBox::critical(m_parentWidget, 
                               tr("Error"), 
-                              tr("Biomes were not exported. Please check your directory permissions."));
+                              tr("Scheme was not exported. Please check your directory permissions."));
     }
 }
+
 
 } // namespace Cajander::UI

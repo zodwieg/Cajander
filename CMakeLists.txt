@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(cajander_project VERSION 0.3.2 LANGUAGES CXX) # Переименовал проект, чтобы не путать с бинарником
+project(cajander_project VERSION 0.3.2 LANGUAGES CXX)
 
 list(APPEND CMAKE_PREFIX_PATH "C:/OSGeo4W/apps/Qt5")
 

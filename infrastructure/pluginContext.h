@@ -2,7 +2,6 @@
 
 #include <memory>
 
-// Опережающие объявления
 namespace Cajander::Services { class BiomeRepository; }
 namespace Cajander::Gui      { class BiomeModel; }
 

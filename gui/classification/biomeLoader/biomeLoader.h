@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QString>
 
-// Опережающие объявления
 namespace Cajander::Services { class BiomeRepository; }
 
 namespace Cajander::Gui {

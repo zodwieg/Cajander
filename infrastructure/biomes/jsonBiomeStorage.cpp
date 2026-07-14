@@ -2,8 +2,8 @@
 #include <QFile>
 #include <QDir>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QCoreApplication>
+#include <QJsonArray>
+#include <QFileInfo>
 #include <qgsapplication.h> 
 
 namespace Cajander::Infrastructure {
@@ -16,10 +16,9 @@ JsonBiomeStorage::JsonBiomeStorage() {
     m_isCustomMode = false;
 }
 
-// Реализация кастомного конструктора
 JsonBiomeStorage::JsonBiomeStorage(const QString& customFilePath)
     : m_userFilePath(customFilePath)
-    , m_isCustomMode(true) // В этом режиме дефолтные файлы не копируем
+    , m_isCustomMode(true)
 {
 }
 
@@ -40,10 +39,13 @@ void JsonBiomeStorage::ensureUserFileExists() {
     }
 }
 
-// Статический парсер из QJsonArray в вектор структур
-std::vector<Domain::Biome> JsonBiomeStorage::parseJsonArray(const QJsonArray& array) {
-    std::vector<Domain::Biome> result;
-    result.reserve(array.size());
+Domain::BiomeScheme JsonBiomeStorage::deserializeScheme(const QJsonObject& rootObj) {
+    Domain::BiomeScheme scheme;
+    
+    scheme.name = rootObj.value("scheme_name").toString("Unnamed Scheme");
+
+    QJsonArray array = rootObj.value("biomes").toArray();
+    scheme.biomes.reserve(array.size());
 
     for (const QJsonValue& value : array) {
         if (!value.isObject()) continue;
@@ -54,30 +56,42 @@ std::vector<Domain::Biome> JsonBiomeStorage::parseJsonArray(const QJsonArray& ar
         biome.name = obj["name"].toString();
         biome.description = obj["description"].toString();
 
-        result.push_back(biome);
+        if (obj.contains("color")) {
+            biome.color = QColor(obj["color"].toString());
+        }
+        if (!biome.color.isValid()) {
+            biome.color = QColor(Qt::white); 
+        }
+
+        scheme.biomes.push_back(biome);
     }
-    return result;
+    return scheme;
 }
 
-// Статический сериализатор из вектора в QJsonArray
-QJsonArray JsonBiomeStorage::serializeBiomes(const std::vector<Domain::Biome>& biomes) {
+QJsonObject JsonBiomeStorage::serializeScheme(const Domain::BiomeScheme& scheme) {
+    QJsonObject rootObj;
+    rootObj["scheme_name"] = scheme.name;
+
     QJsonArray array;
-    for (const auto& biome : biomes) {
+    for (const auto& biome : scheme.biomes) {
         QJsonObject obj;
         obj["code"] = biome.code;
         obj["name"] = biome.name;
         obj["description"] = biome.description;
+        obj["color"] = biome.color.name();
         array.append(obj);
     }
-    return array;
+    
+    rootObj["biomes"] = array;
+    return rootObj;
 }
 
-std::vector<Domain::Biome> JsonBiomeStorage::loadBiomes() {
+std::optional<Domain::BiomeScheme> JsonBiomeStorage::loadScheme() {
     ensureUserFileExists();
 
     QFile file(m_userFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return {}; 
+        return std::nullopt; 
     }
 
     QByteArray data = file.readAll();
@@ -85,18 +99,17 @@ std::vector<Domain::Biome> JsonBiomeStorage::loadBiomes() {
 
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
-    if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-        return {}; 
+
+    if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+        return std::nullopt; 
     }
 
-    // Переиспользуем статический метод
-    return parseJsonArray(doc.array());
+    return deserializeScheme(doc.object());
 }
 
-bool JsonBiomeStorage::saveBiomes(const std::vector<Domain::Biome>& biomes) {
-    QJsonArray array = serializeBiomes(biomes);
-
-    QJsonDocument doc(array);
+bool JsonBiomeStorage::saveScheme(const Domain::BiomeScheme& scheme) {
+    QJsonObject rootObj = serializeScheme(scheme);
+    QJsonDocument doc(rootObj);
     QFile file(m_userFilePath);
     
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -108,13 +121,13 @@ bool JsonBiomeStorage::saveBiomes(const std::vector<Domain::Biome>& biomes) {
     return true;
 }
 
-bool JsonBiomeStorage::saveBiomesTo(const std::vector<Domain::Biome>& biomes, const QString& filePath) {
+bool JsonBiomeStorage::saveSchemeTo(const Domain::BiomeScheme& scheme, const QString& filePath) {
     if (filePath.isEmpty()) {
         return false;
     }
 
-    QJsonArray array = serializeBiomes(biomes);
-    QJsonDocument doc(array);
+    QJsonObject rootObj = serializeScheme(scheme);
+    QJsonDocument doc(rootObj);
     QFile file(filePath);
     
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {

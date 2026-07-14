@@ -8,7 +8,6 @@
 
 namespace Cajander::Gui {
 
-// Инициализируем ссылку на репозиторий
 BiomeLoader::BiomeLoader(Services::BiomeRepository& repository, QWidget* parent)
     : QObject(parent)
     , m_repository(repository)
@@ -47,13 +46,19 @@ void BiomeLoader::showErrorDialog(const QString& text) {
 bool BiomeLoader::loadJsonFromFile(const QString& filePath, QString& errorMsg) {
     Cajander::Infrastructure::JsonBiomeStorage temporaryStorage(filePath);
     
-    std::vector<Domain::Biome> loadedBiomes = temporaryStorage.loadBiomes();
+    std::optional<Domain::BiomeScheme> loadedScheme = temporaryStorage.loadScheme();
     
-    if (loadedBiomes.empty()) {
-        errorMsg = tr("The file is empty, corrupted, or has an invalid format.");
+    if (!loadedScheme.has_value()) {
+        errorMsg = tr("The file is corrupted, has an invalid format, or could not be read.");
         return false;
     }
-    m_repository.importBiomes(std::move(loadedBiomes));
+
+    if (loadedScheme->biomes.empty()) {
+        errorMsg = tr("The scheme was loaded successfully, but it contains no biomes.");
+        return false;
+    }
+
+    m_repository.importScheme(std::move(loadedScheme.value()));
 
     return true; 
 }

@@ -2,7 +2,6 @@
 
 #include <QAbstractListModel>
 
-// Опережающие объявления (Forward declarations) для уменьшения времени компиляции
 namespace Cajander::Services { class BiomeRepository; }
 
 namespace Cajander::Gui {

@@ -18,7 +18,7 @@ ClassificationTab::ClassificationTab(QWidget* parent)
     m_biomeSelector = new Cajander::Gui::BiomeSelector(this);
 
     auto* formLayout = new QFormLayout();
-    formLayout->addRow(tr("Select Biome:"), m_biomeSelector);
+    formLayout->addRow(m_biomeSelector);
     
     mainLayout->addLayout(formLayout);
 
