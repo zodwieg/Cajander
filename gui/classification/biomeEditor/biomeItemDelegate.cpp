@@ -22,6 +22,7 @@ void BiomeItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
     if (index.column() == BiomeTableModel::ColorColumn) {
         painter->save();
 
+        // Drawing standard cell background (selection, focus, row alternation)
         QStyleOptionViewItem opt = option;
         initStyleOption(&opt, index);
         opt.widget->style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
@@ -31,8 +32,8 @@ void BiomeItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
             color = Qt::transparent;
         }
 
+        // Calculating geometry of the centered color square
         const int iconSize = 14; 
-        
         QRect rect = option.rect;
         int x = rect.x() + (rect.width() - iconSize) / 2;
         int y = rect.y() + (rect.height() - iconSize) / 2;
@@ -40,6 +41,7 @@ void BiomeItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
 
         painter->fillRect(colorRect, color);
 
+        // Drawing thin gray border around the color indicator
         painter->setPen(QColor(160, 160, 160));
         painter->drawRect(colorRect);
 
@@ -52,6 +54,7 @@ void BiomeItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opt
 bool BiomeItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index) {
     if (index.column() == BiomeTableModel::Columns::ColorColumn) {
         
+        // Preventing launching of the default text editor with mouse click
         if (event->type() == QEvent::MouseButtonPress) {
             auto* mouseEvent = static_cast<QMouseEvent*>(event);
             if (mouseEvent->button() == Qt::LeftButton) {
@@ -59,6 +62,7 @@ bool BiomeItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, co
             }
         }
 
+        // Opening color selection dialog when mouse left button is strictly up
         if (event->type() == QEvent::MouseButtonRelease) {
             auto* mouseEvent = static_cast<QMouseEvent*>(event);
             if (mouseEvent->button() == Qt::LeftButton) {
@@ -66,6 +70,7 @@ bool BiomeItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, co
             }
         }
 
+        // Blocking the default space key behavior
         if (event->type() == QEvent::KeyPress) {
             auto* keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() == Qt::Key_Space) {
@@ -73,6 +78,7 @@ bool BiomeItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, co
             }
         }
 
+        // Opening color selection dialog when space button is strictly up
         if (event->type() == QEvent::KeyRelease) {
             auto* keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() == Qt::Key_Space) {
@@ -86,6 +92,7 @@ bool BiomeItemDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, co
 bool BiomeItemDelegate::openColorDialog(QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index) const {
     QColor currentColor = index.data(Qt::EditRole).value<QColor>();
 
+    // Calling the modal dialog, parent is the table widget (using const_cast)
     QColor chosenColor = QColorDialog::getColor(
         currentColor, 
         const_cast<QWidget*>(option.widget), 
@@ -107,6 +114,7 @@ QWidget* BiomeItemDelegate::createEditor(QWidget* parent, const QStyleOptionView
         return spinBox;
     }
     
+    // We dont' create an editor widget for the color, managing it with editorEvent
     if (index.column() == BiomeTableModel::ColorColumn) {
         return nullptr; 
     }
@@ -147,6 +155,7 @@ void BiomeItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
             const int newCode = spinBox->value();
             const int currentCode = model->data(index, Qt::EditRole).toInt();
 
+            // Checking if biome code is unique in the whole repository before saving
             if (newCode != currentCode) {
                 const auto& biomes = m_repository.getBiomes();
                 bool codeExists = std::any_of(biomes.begin(), biomes.end(),
@@ -156,7 +165,7 @@ void BiomeItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                 if (codeExists) {
                     QMessageBox::warning(editor->window(), tr("Validation Error"), 
                         tr("Biome code %1 already exists. Codes must be unique.").arg(newCode));
-                    return; 
+                    return; // If not valid, data is not saved and the cell remains in editing mode
                 }
             }
             model->setData(index, newCode, Qt::EditRole);
@@ -191,6 +200,7 @@ void BiomeItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 
 void BiomeItemDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const {
     Q_UNUSED(index);
+    // Fitting the inline editor widget geometry into the cell borders
     editor->setGeometry(option.rect);
 }
 

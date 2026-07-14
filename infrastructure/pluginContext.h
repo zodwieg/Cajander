@@ -3,7 +3,7 @@
 #include <memory>
 
 namespace Cajander::Services { class BiomeRepository; }
-namespace Cajander::Gui      { class BiomeModel; }
+namespace Cajander::Gui      { class BiomeListModel; }
 
 namespace Cajander {
 
@@ -36,7 +36,7 @@ public:
      * @brief Gets the reference to the active biome UI model (Qt Item Model).
      * @return Reference to the BiomeModel instance.
      */
-    Cajander::Gui::BiomeModel& biomeModel() const;
+    Cajander::Gui::BiomeListModel& biomeModel() const;
 
 private:
     /**
@@ -51,7 +51,7 @@ private:
     ~PluginContext();
 
     std::unique_ptr<Cajander::Services::BiomeRepository> m_biomeRepository;
-    std::unique_ptr<Cajander::Gui::BiomeModel> m_biomeModel;
+    std::unique_ptr<Cajander::Gui::BiomeListModel> m_biomeModel;
 };
 
 } // namespace Cajander

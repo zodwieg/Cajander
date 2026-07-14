@@ -1,7 +1,7 @@
 #include "plugincontext.h"
 #include "services/biomes/biomerepository.h"
 #include "infrastructure/biomes/jsonbiomestorage.h"
-#include "gui/classification/biomeSelector/biomeModel.h"
+#include "gui/classification/biomeSelector/biomeListModel.h"
 
 namespace Cajander {
 
@@ -22,7 +22,7 @@ PluginContext::PluginContext() {
     m_biomeRepository->loadFromStorage();
 
     // 4. Wrap repository inside the Qt presentation model
-    m_biomeModel = std::make_unique<Gui::BiomeModel>(*m_biomeRepository);
+    m_biomeModel = std::make_unique<Gui::BiomeListModel>(*m_biomeRepository);
 }
 
 // Default destructor is required here in the .cpp file, 
@@ -33,7 +33,7 @@ Cajander::Services::BiomeRepository& PluginContext::biomeRepository() const {
     return *m_biomeRepository;
 }
 
-Cajander::Gui::BiomeModel& PluginContext::biomeModel() const {
+Cajander::Gui::BiomeListModel& PluginContext::biomeModel() const {
     return *m_biomeModel;
 }
 

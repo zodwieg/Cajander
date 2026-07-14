@@ -23,7 +23,7 @@ QgisInterface* g_qgisInterface = nullptr;
 QAction* g_pluginAction = nullptr;
 
 /// Main dialog window instance of the CAJANDER plugin.
-MainDialog* g_mainDialog = nullptr;
+Cajander::Gui::MainDialog* g_mainDialog = nullptr;
 /** @} */
 
 #if defined(_MSC_VER)
@@ -83,7 +83,7 @@ extern "C" {
 
         QObject::connect(g_pluginAction, &QAction::triggered, []() {
             if (!g_mainDialog) {
-                g_mainDialog = new MainDialog(g_qgisInterface->mainWindow());
+                g_mainDialog = new Cajander::Gui::MainDialog(g_qgisInterface->mainWindow());
                 g_mainDialog->setAttribute(Qt::WA_DeleteOnClose);
                 
                 QObject::connect(g_mainDialog, &QObject::destroyed, []() {

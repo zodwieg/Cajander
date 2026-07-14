@@ -30,6 +30,7 @@ BiomeEditor::BiomeEditor(Services::BiomeRepository& repository, QWidget* parent)
 
     m_tableView->setItemDelegate(new BiomeItemDelegate(m_repository, this));
     
+    // Configure column geometry and resizing behavior
     m_tableView->horizontalHeader()->setSectionResizeMode(BiomeTableModel::Columns::GripColumn, QHeaderView::Fixed);
     m_tableView->setColumnWidth(BiomeTableModel::Columns::GripColumn, 30);
     
@@ -46,12 +47,14 @@ BiomeEditor::BiomeEditor(Services::BiomeRepository& repository, QWidget* parent)
 
     updateSchemeNameFromRepo();
 
+    // Track model structure changes to re-inject custom inline widgets
     connect(m_model, &BiomeTableModel::rowsInserted, this, &BiomeEditor::updateTableWidgets);
     connect(m_model, &BiomeTableModel::rowsRemoved, this, &BiomeEditor::updateTableWidgets);
     connect(m_model, &BiomeTableModel::modelReset, this, &BiomeEditor::updateTableWidgets);
 
     updateTableWidgets();
 
+    // Re-sync dialog headers if database state changes globally
     connect(&m_repository, &Services::BiomeRepository::biomesChanged, this, &BiomeEditor::updateSchemeNameFromRepo);
     m_tableView->installEventFilter(this);
 }
@@ -66,12 +69,14 @@ void BiomeEditor::setupUi() {
     auto* schemeLabel = new QLabel(tr("Classification Scheme:"), this);
     m_schemeNameEdit = new QLineEdit(this);
     m_schemeNameEdit->setPlaceholderText(tr("Enter scheme name..."));
+    
     m_loadButton = new QPushButton(this);
     m_exportButton = new QPushButton(this);
     m_loadButton->setToolTip(tr("Load biomes from file..."));
     m_exportButton->setToolTip(tr("Export biomes to file..."));
     m_loadButton->setFixedSize(30, 24);
     m_exportButton->setFixedSize(30, 24);
+    
     topLayout->addWidget(schemeLabel);
     topLayout->addWidget(m_schemeNameEdit, 1);
     topLayout->addWidget(m_loadButton);
@@ -95,7 +100,6 @@ void BiomeEditor::setupUi() {
     bottomLayout->addWidget(m_addButton);
     bottomLayout->addStretch(); 
     bottomLayout->addWidget(m_closeButton);
-    
     mainLayout->addLayout(bottomLayout);
 
     connect(m_schemeNameEdit, &QLineEdit::editingFinished, this, &BiomeEditor::onSchemeNameEdited);
@@ -112,7 +116,6 @@ void BiomeEditor::onSchemeNameEdited() {
 
 void BiomeEditor::updateSchemeNameFromRepo() {
     const QString currentName = m_repository.getSchemeName(); 
-    
     if (m_schemeNameEdit->text() != currentName) {
         m_schemeNameEdit->setText(currentName);
     }
@@ -125,7 +128,7 @@ void BiomeEditor::onLoadBiomesClicked() {
 }
 
 void BiomeEditor::onExportBiomesClicked() {
-    auto* exporter = new Cajander::UI::BiomeExporter(&m_repository, this);
+    auto* exporter = new Cajander::Gui::BiomeExporter(&m_repository, this);
     exporter->openSaveDialog();
     exporter->deleteLater();
 }
@@ -143,12 +146,13 @@ void BiomeEditor::onAddBiomeClicked() {
 void BiomeEditor::updateTableWidgets() {
     const QSize iconSize(16, 16);
 
+    // Iterating over rows to inject widgets into specific cells dynamically
     for (int row = 0; row < m_model->rowCount(); ++row) {
         
+        // Setup visual grip handle indicator for row drag/selection context
         QModelIndex gripIndex = m_model->index(row, BiomeTableModel::Columns::GripColumn);
         if (!m_tableView->indexWidget(gripIndex)) {
             auto* gripLabel = new QLabel(m_tableView);
-            
             gripLabel->setText("⁞⁞"); 
             gripLabel->setAlignment(Qt::AlignCenter);
             gripLabel->setCursor(Qt::OpenHandCursor);
@@ -168,10 +172,10 @@ void BiomeEditor::updateTableWidgets() {
                 "  margin-bottom: 1px; "
                 "}"
             );
-            
             m_tableView->setIndexWidget(gripIndex, gripLabel);
         }
 
+        // Setup individual transactional 'Delete' button per table row
         QModelIndex deleteIndex = m_model->index(row, BiomeTableModel::Columns::DeleteColumn);
         if (!m_tableView->indexWidget(deleteIndex)) {
             auto* deleteButton = new QPushButton(m_tableView);
@@ -180,9 +184,9 @@ void BiomeEditor::updateTableWidgets() {
             
             Cajander::Gui::Utils::setupThemeIcon(deleteButton, QString("/mActionDeleteSelected.svg"), QString("BiomeEditor"));
             deleteButton->setIconSize(iconSize);
-            
             deleteButton->setStyleSheet("QPushButton { border: none; background: transparent; }");
             
+            // Capture the specific row index for the destruction signal callback
             connect(deleteButton, &QPushButton::clicked, this, [this, row]() {
                 m_model->removeBiome(row);
             });
@@ -195,6 +199,7 @@ void BiomeEditor::updateTableWidgets() {
 void BiomeEditor::showEvent(QShowEvent* event) {
     QDialog::showEvent(event);
 
+    // Guarantee thread-safe icon resolving and SVG theme extraction triggers once UI is mapped
     std::call_once(m_resourcesLoadedFlag, [this]() {
         Cajander::Gui::Utils::setupThemeIcon(m_loadButton, QString("/mActionFileOpen.svg"), QString("BiomeEditor"));
         Cajander::Gui::Utils::setupThemeIcon(m_exportButton, QString("/mActionFileSaveAs.svg"), QString("BiomeEditor"));
@@ -203,6 +208,7 @@ void BiomeEditor::showEvent(QShowEvent* event) {
 }
 
 bool BiomeEditor::eventFilter(QObject* watched, QEvent* event) {
+    // Intercept keyboard events within the grid to improve accessibility handles
     if (watched == m_tableView && event->type() == QEvent::KeyPress) {
         auto* keyEvent = static_cast<QKeyEvent*>(event);
         
@@ -210,20 +216,16 @@ bool BiomeEditor::eventFilter(QObject* watched, QEvent* event) {
             QModelIndex currentIndex = m_tableView->currentIndex();
             
             if (currentIndex.isValid() && currentIndex.column() == BiomeTableModel::Columns::ColorColumn) {
-                
                 QColor currentColor = currentIndex.data(Qt::EditRole).value<QColor>();
-
                 QColor chosenColor = QColorDialog::getColor(currentColor, m_tableView, tr("Select Biome Color"));
                 
                 if (chosenColor.isValid() && chosenColor != currentColor) {
                     m_tableView->model()->setData(currentIndex, chosenColor, Qt::EditRole);
                 }
-                
-                return true;
+                return true; // Consume event to prevent view from scrolling down or passing focus
             }
         }
     }
-    
     return QDialog::eventFilter(watched, event);
 }
 

@@ -5,7 +5,7 @@ set(GUI_SOURCES
     data/DataTab.cpp
     classification/ClassificationTab.cpp
     classification/biomeSelector/biomeSelector.cpp
-    classification/biomeSelector/biomeModel.cpp
+    classification/biomeSelector/biomeListModel.cpp
     classification/biomeLoader/biomeLoader.cpp
     classification/biomeEditor/biomeEditor.cpp
     classification/biomeEditor/biomeTableModel.cpp
@@ -21,7 +21,7 @@ set(GUI_HEADERS
     data/DataTab.h
     classification/ClassificationTab.h
     classification/biomeSelector/biomeSelector.h
-    classification/biomeSelector/biomeModel.h
+    classification/biomeSelector/biomeListModel.h
     classification/biomeLoader/biomeLoader.h
     classification/biomeEditor/biomeEditor.h
     classification/biomeEditor/biomeTableModel.h
